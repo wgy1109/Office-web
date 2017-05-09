@@ -65,7 +65,7 @@
 		</div>
 	</form>
 	<div class="footer">
-		Copyright &copy; 2014-${fns:getConfig('copyrightYear')} <a href="#">${fns:getConfig('productName')}</a> - Powered By <a href="http://www.chanzor.com" target="_blank">Chanzor team</a> ${fns:getConfig('version')} 
+		Copyright &copy; 2014-${fns:getConfig('copyrightYear')} <a href="#">${fns:getConfig('productName')}</a> - Powered By <a href="http://www.baidu.com" target="_blank">百度一下</a> ${fns:getConfig('version')} 
 	</div>
 	<script src="${ctxStatic}/flash/zoom.min.js" type="text/javascript"></script>
 </body>
