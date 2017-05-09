@@ -47,7 +47,7 @@
 	</div>
 	<h1 class="form-signin-heading"><img alt="" src="${ctxStatic}/images/denglu.png" /></h1>
 	<form id="loginForm" class="form-signin" action="${ctx}/login" method="post">
-		<label class="input-label" for="username">登录名</label>
+		<label class="input-label" for="username">用户名</label>
 		<input type="text" id="username" name="username" class="input-block-level required" value="${username}">
 		<label class="input-label" for="password">密码</label>
 		<input type="password" id="password" name="password" class="input-block-level required">
