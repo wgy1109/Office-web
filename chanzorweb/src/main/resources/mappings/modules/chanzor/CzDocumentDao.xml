@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chanzor.office.modules.chanzor.dao.CzDocumentDao">
+    
+	<sql id="czDocumentColumns">
+		a.id AS "id",
+		a.title AS "title",
+		a.description AS "description",
+		a.create_time AS "createTime",
+		a.update_time AS "updateTime",
+		a.status AS "status",
+		a.image AS "image"
+	</sql>
+	
+	<sql id="czDocumentJoins">
+	</sql>
+    
+	<select id="get" resultType="CzDocument">
+		select a.id AS "id",
+		a.title AS "title",
+		a.description AS "description",
+		a.create_time AS "createTime",
+		a.update_time AS "updateTime",
+		a.status AS "status", a.image,  c.content from cz_document a , cz_document_article c where a.id = c.document_id and a.id = #{id} 
+	</select>
+	
+	<select id="findList" resultType="CzDocument">
+		SELECT 
+			<include refid="czDocumentColumns"/>
+		FROM cz_document a
+		<include refid="czDocumentJoins"/>
+		<where>
+			
+			<if test="title != null and title != ''">
+				AND a.title LIKE 
+					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{title}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{title},'%')</if>
+			</if>
+		</where>
+		order by a.create_time desc 
+	</select>
+	
+	<select id="findAllList" resultType="CzDocument">
+		SELECT 
+			<include refid="czDocumentColumns"/>
+		FROM cz_document a
+		<include refid="czDocumentJoins"/>
+		<where>
+			
+		</where>	
+		order by a.create_time desc 
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO cz_document(
+			id,
+			title,
+			description,
+			<if test="image !=null and image !=''">image,</if>
+			create_time
+		) VALUES (
+			#{id},
+			#{title},
+			#{description},
+			<if test="image !=null and image !=''">#{image},</if>
+			now()
+		)
+	</insert>
+	
+	<insert id="insertarticle">
+		INSERT INTO cz_document_article(
+			id,
+			document_id,
+			content
+		) VALUES (
+			#{id},
+			#{id},
+			#{content}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE cz_document SET 	
+			title = #{title},
+			description = #{description},
+			update_time = now(),
+			<if test="image !=null and image !=''">image = #{image},</if>
+			status = #{status}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<update id="updatearticle">
+		UPDATE cz_document_article SET content = #{content} WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM cz_document
+		WHERE id = #{id}
+	</update>
+	
+	<update id="deletearticle">
+		DELETE FROM cz_document_article WHERE document_id = #{id}
+	</update>
+	
+	<select id="getList" resultType="CzDocument">
+		select <include refid="czDocumentColumns"/> from cz_document a order by a.create_time desc limit ${pagesize} offset ${start} 
+	</select>
+	
+	<select id="getCount" resultType="map">
+		select count(1) count from cz_document a 
+	</select>
+	
+</mapper>

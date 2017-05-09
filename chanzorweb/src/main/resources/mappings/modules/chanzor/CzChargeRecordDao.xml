@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chanzor.office.modules.chanzor.dao.CzChargeRecordDao">
+    
+	<sql id="czChargeRecordColumns">
+		a.id AS "id",
+		a.create_time AS "createTime",
+		a.product_id AS "productId",
+		a.amount AS "amount",
+		a.alipay_type AS "alipayType",
+		a.charge_arrival_time AS "chargeArrivalTime",
+		a.ip AS "ip"
+	</sql>
+	
+	<sql id="czChargeRecordJoins">
+	</sql>
+    
+	<select id="get" resultType="CzChargeRecord">
+		SELECT 
+			<include refid="czChargeRecordColumns"/>
+		FROM cz_charge_record a
+		<include refid="czChargeRecordJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="CzChargeRecord">
+		SELECT 
+			<include refid="czChargeRecordColumns"/>
+		FROM cz_charge_record a
+		<include refid="czChargeRecordJoins"/>
+		<where>
+			
+			<if test="createTime != null and createTime != ''">
+				AND a.create_time = #{createTime}
+			</if>
+			<if test="productId != null and productId != ''">
+				AND a.product_id = #{productId}
+			</if>
+			<if test="alipayType != null and alipayType != ''">
+				AND a.alipay_type = #{alipayType}
+			</if>
+		</where>
+		ORDER BY a.create_time desc 
+	</select>
+	
+	<select id="findAllList" resultType="CzChargeRecord">
+		SELECT 
+			<include refid="czChargeRecordColumns"/>
+		FROM cz_charge_record a
+		<include refid="czChargeRecordJoins"/>
+		<where>
+			
+		</where>		
+		ORDER BY a.create_time desc 
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO cz_charge_record(
+			create_time,
+			product_id,
+			amount,
+			alipay_type,
+			charge_arrival_time,
+			ip
+		) VALUES (
+			now(),
+			#{productId},
+			#{amount},
+			#{alipayType},
+			#{chargeArrivalTime},
+			#{ip}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE cz_charge_record SET 	
+			create_time = #{createTime},
+			product_id = #{productId},
+			amount = #{amount},
+			alipay_type = #{alipayType},
+			charge_arrival_time = #{chargeArrivalTime},
+			ip = #{ip}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updateTypeByProductId">
+		update
+		cz_charge_record set alipay_type=${alipayType}, charge_arrival_time = now()  where 
+		product_id=#{productId} and alipay_type=0
+	</update>
+	
+	<update id="delete">
+		DELETE FROM cz_charge_record
+		WHERE id = #{id}
+	</update>
+	
+	<select id="getCzChargeRecordBypid" resultType="CzChargeRecord">
+		SELECT 
+			<include refid="czChargeRecordColumns"/>
+		FROM cz_charge_record a
+		WHERE a.product_id = #{productId} 
+	</select>
+	
+</mapper>

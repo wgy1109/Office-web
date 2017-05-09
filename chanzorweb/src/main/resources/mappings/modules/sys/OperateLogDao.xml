@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chanzor.office.modules.sys.dao.OperateLogDao">
+    
+	<sql id="operateLogColumns">
+		a.id AS "id",
+		a.log_type AS "logType",
+		a.log_content AS "logContent",
+		a.operator_ip AS "operatorIp",
+		a.user_chinese_name AS "userChineseName",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate"
+	</sql>
+	
+	<sql id="operateLogJoins">
+	</sql>
+    
+	<select id="get" resultType="OperateLog">
+		SELECT 
+			<include refid="operateLogColumns"/>
+		FROM operate_log a
+		<include refid="operateLogJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="OperateLog">
+		SELECT 
+			<include refid="operateLogColumns"/>
+		FROM operate_log a
+		<include refid="operateLogJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL} 
+			<if test="user_chinese_name != null and user_chinese_name != ''">
+				AND a.user_chinese_name LIKE
+				<if test="dbName == 'mysql'">concat('%',#{user_chinese_name},'%')</if>
+			</if>
+			<if test="log_type != null">
+				AND a.log_type = #{log_type}
+			</if>
+			<if test="create_date_begin != null">
+				AND a.create_date <![CDATA[ >= #{create_date_begin}]]>
+			</if>
+			<if test="create_date_end != null">
+				AND a.create_date <![CDATA[ <= #{create_date_end} ]]>
+			</if>
+		</where>
+		order by create_date desc
+	</select>
+	
+	<select id="findAllList" resultType="OperateLog">
+		SELECT 
+			<include refid="operateLogColumns"/>
+		FROM operate_log a
+		<include refid="operateLogJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO operate_log(
+			id,
+			log_type,
+			log_content,
+			operator_ip,
+			user_chinese_name,
+			remarks,
+			del_flag,
+			create_by,
+			create_date
+		) VALUES (
+			#{id},
+			#{logType},
+			#{logContent},
+			#{operatorIp},
+			#{userChineseName},
+			#{remarks},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE operate_log SET 	
+			log_type = #{logType},
+			log_content = #{logContent},
+			operator_ip = #{operatorIp},
+			user_chinese_name = #{userChineseName},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE operate_log SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
